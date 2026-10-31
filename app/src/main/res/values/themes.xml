@@ -2,4 +2,9 @@
 <resources>
 
     <style name="Theme.DocConverter" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.DocBoss.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/docboss_primary</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_docboss_splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.DocConverter</item>
+    </style>
 </resources>
