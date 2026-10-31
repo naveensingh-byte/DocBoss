@@ -64,4 +64,5 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("androidx.core:core-splashscreen:1.0.1")
 }
