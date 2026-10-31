@@ -3,7 +3,7 @@ package com.example.docconverter
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
-import android.util.Log
+import okhttp3.Credentials
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -11,12 +11,14 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.concurrent.TimeUnit
 
-const val SERVER_URL = "http://172.20.144.1:3000"
+private val SERVER_URL: String = BuildConfig.SERVER_URL
+private val SERVER_USER: String = BuildConfig.SERVER_USER
+private val SERVER_PASS: String = BuildConfig.SERVER_PASS
 
 private val client = OkHttpClient.Builder()
-    .connectTimeout(15, TimeUnit.SECONDS)
-    .readTimeout(180, TimeUnit.SECONDS)
-    .writeTimeout(180, TimeUnit.SECONDS)
+    .connectTimeout(150, TimeUnit.SECONDS)   // free server may be asleep
+    .readTimeout(240, TimeUnit.SECONDS)
+    .writeTimeout(240, TimeUnit.SECONDS)
     .build()
 
 fun displayName(context: Context, uri: Uri): String {
@@ -33,6 +35,8 @@ fun officeToPdf(context: Context, input: Uri, output: Uri): String? {
         val name = displayName(context, input)
         val bytes = context.contentResolver.openInputStream(input)!!.use { it.readBytes() }
 
+        if (bytes.size > 20 * 1024 * 1024) return "File too big (max 20 MB)"
+
         val body = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart(
@@ -43,6 +47,7 @@ fun officeToPdf(context: Context, input: Uri, output: Uri): String? {
 
         val request = Request.Builder()
             .url("$SERVER_URL/forms/libreoffice/convert")
+            .header("Authorization", Credentials.basic(SERVER_USER, SERVER_PASS))
             .post(body)
             .build()
 
@@ -54,7 +59,7 @@ fun officeToPdf(context: Context, input: Uri, output: Uri): String? {
         }
         null
     } catch (e: Exception) {
-        Log.e("Converter", "office convert failed", e)
+        android.util.Log.e("Converter", "office convert failed", e)
         e.message ?: "Unknown error"
     }
 }
