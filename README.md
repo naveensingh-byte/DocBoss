@@ -1,4 +1,4 @@
-# 📄 DocConverter
+# 📄 DocBoss
 
 **DocConverter** is an Android application that makes document conversion simple and convenient. It allows users to convert images and Office documents into PDF format through an easy-to-use interface.
 
